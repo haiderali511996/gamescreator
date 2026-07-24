@@ -7,21 +7,28 @@ interface MarqueeGame {
   title: string;
 }
 
+const MIN_TILES_PER_ROW = 16;
+
 function MarqueeRow({
   games,
-  duration,
   reverse = false,
 }: {
   games: MarqueeGame[];
-  duration: number;
   reverse?: boolean;
 }) {
-  const loop = [...games, ...games];
+  // Repeat the row's games enough times to comfortably overflow the
+  // viewport width before duplicating the whole set once more for a
+  // seamless loop — otherwise a small catalog leaves the strip short
+  // and stuck in the left corner instead of spanning the section.
+  const repeats = Math.max(1, Math.ceil(MIN_TILES_PER_ROW / games.length));
+  const filled = Array.from({ length: repeats }, () => games).flat();
+  const loop = [...filled, ...filled];
+  const duration = filled.length * 3.5;
 
   return (
     <div className="flex overflow-hidden">
       <div
-        className="flex shrink-0 gap-4 pr-4"
+        className="flex w-max shrink-0 gap-4 pr-4"
         style={{
           animation: `gc-marquee ${duration}s linear infinite ${reverse ? "reverse" : "normal"}`,
         }}
@@ -50,9 +57,9 @@ export default function GameMarquee({ games }: { games: MarqueeGame[] }) {
   ].filter((r) => r.length > 0);
 
   return (
-    <div className="space-y-4 py-2 [mask-image:linear-gradient(90deg,transparent,white_10%,white_90%,transparent)]">
+    <div className="w-full space-y-4 overflow-hidden py-2 [mask-image:linear-gradient(90deg,transparent,white_10%,white_90%,transparent)]">
       {rows.map((row, i) => (
-        <MarqueeRow key={i} games={row} duration={22 + i * 6} reverse={i % 2 === 1} />
+        <MarqueeRow key={i} games={row} reverse={i % 2 === 1} />
       ))}
     </div>
   );
