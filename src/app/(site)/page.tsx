@@ -84,7 +84,17 @@ export default async function HomePage() {
             </Link>
           </Reveal>
 
-          <GameCardGrid games={games as unknown as { _id: string; slug: string; title: string; description: string; status: string; platform?: string[] }[]} />
+          <GameCardGrid
+            games={games.map((g) => ({
+              _id: g._id.toString(),
+              slug: g.slug,
+              title: g.title,
+              description: g.description,
+              status: g.status,
+              platform: g.platform,
+              genre: g.genre,
+            }))}
+          />
         </div>
       </section>
 
