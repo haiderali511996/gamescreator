@@ -1,6 +1,17 @@
+import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
-dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+
+// Read .env.local directly and merge it in, overriding any empty/placeholder
+// values a global dotenv-loading tool (e.g. dotenvx) may have already
+// injected into process.env before this script started.
+const envLocalPath = path.resolve(process.cwd(), ".env.local");
+if (fs.existsSync(envLocalPath)) {
+  const parsed = dotenv.parse(fs.readFileSync(envLocalPath));
+  for (const [key, value] of Object.entries(parsed)) {
+    if (value) process.env[key] = value;
+  }
+}
 
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
@@ -89,12 +100,15 @@ async function seed() {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
     const envPath = path.resolve(process.cwd(), ".env.local");
-    const found = Object.keys(process.env).filter((k) =>
-      ["MONGODB_URI", "NEXTAUTH_SECRET", "NEXTAUTH_URL", "ADMIN_SEED_EMAIL", "ADMIN_SEED_PASSWORD"].includes(k)
-    );
+    const expected = ["MONGODB_URI", "NEXTAUTH_SECRET", "NEXTAUTH_URL", "ADMIN_SEED_EMAIL", "ADMIN_SEED_PASSWORD"];
+    const withValues = expected.filter((k) => !!process.env[k]);
+    const presentButEmpty = expected.filter((k) => k in process.env && !process.env[k]);
     throw new Error(
       `MONGODB_URI not set.\nExpected to load it from: ${envPath}\n` +
-        `Env keys actually found from that set: ${found.length ? found.join(", ") : "(none)"}\n` +
+        `Keys with a real value: ${withValues.length ? withValues.join(", ") : "(none)"}\n` +
+        `Keys present but empty (likely injected by another tool, e.g. dotenvx, without a value): ${
+          presentButEmpty.length ? presentButEmpty.join(", ") : "(none)"
+        }\n` +
         `Check that .env.local exists at the repo root, contains a line like ` +
         `"MONGODB_URI=mongodb+srv://..." with no surrounding quotes, and that no other ` +
         `dotenv-loading tool (e.g. dotenvx) is overriding it with a different file.`
