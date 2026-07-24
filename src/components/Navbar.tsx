@@ -80,7 +80,7 @@ export default function Navbar() {
                   transition={{ duration: 0.18 }}
                   className="absolute left-1/2 top-full w-[640px] -translate-x-1/2 pt-4"
                 >
-                  <div className="gc-card grid grid-cols-3 gap-6 rounded-xl p-6 shadow-2xl shadow-black/60">
+                  <div className="grid grid-cols-3 gap-6 rounded-xl border border-amber/15 bg-neutral-950 p-6 shadow-2xl shadow-black/60">
                     {menuGroups.map((group) => (
                       <div key={group.heading}>
                         <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-amber">
