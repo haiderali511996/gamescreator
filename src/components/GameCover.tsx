@@ -1,5 +1,5 @@
 /**
- * Procedural cover art placeholder for games without a real coverImage yet.
+ * Procedural poster-style cover art for games without real box art yet.
  * Deterministic per-title gradient + icon so each game reads as distinct.
  * Swap for a real <Image src={game.coverImage} /> once real art is uploaded.
  */
@@ -9,6 +9,7 @@ const PALETTES = [
   ["#f5a623", "#134e4a"],
   ["#fb923c", "#3b0764"],
   ["#facc15", "#111827"],
+  ["#f97316", "#0f172a"],
 ];
 
 function hashTitle(title: string) {
@@ -18,13 +19,15 @@ function hashTitle(title: string) {
 }
 
 export default function GameCover({ title, className = "" }: { title: string; className?: string }) {
-  const idx = hashTitle(title) % PALETTES.length;
+  const hash = hashTitle(title);
+  const idx = hash % PALETTES.length;
   const [from, to] = PALETTES[idx];
+  const iconRotate = (hash % 40) - 20;
 
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden ${className}`}
-      style={{ background: `linear-gradient(135deg, ${from}33, ${to}66)` }}
+      style={{ background: `linear-gradient(135deg, ${from}33, ${to}88)` }}
     >
       <div
         className="absolute inset-0 opacity-40"
@@ -33,7 +36,13 @@ export default function GameCover({ title, className = "" }: { title: string; cl
             "repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 2px, transparent 2px, transparent 12px)",
         }}
       />
-      <svg width="56" height="56" viewBox="0 0 100 100" className="relative drop-shadow-lg">
+      <svg
+        width="72"
+        height="72"
+        viewBox="0 0 100 100"
+        className="relative drop-shadow-lg"
+        style={{ transform: `rotate(${iconRotate}deg)` }}
+      >
         <path d="M50 8 L50 92 L11 71 L11 29 Z" fill="#ffffff" opacity="0.9" />
         <path d="M50 8 L50 92 L89 71 L89 29 Z" fill="#f5a623" opacity="0.9" />
       </svg>
