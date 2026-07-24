@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
+import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = { title: "About Us" };
 
@@ -35,11 +36,15 @@ export default function AboutPage() {
         </div>
 
         <div className="mt-16 grid gap-6 sm:grid-cols-2">
-          {values.map((v) => (
-            <div key={v.title} className="gc-card rounded-xl p-6">
+          {values.map((v, i) => (
+            <Reveal
+              key={v.title}
+              delay={i * 0.08}
+              className="gc-card rounded-xl p-6 transition hover:-translate-y-1 hover:border-amber/40"
+            >
               <h3 className="gc-heading text-lg font-bold text-amber">{v.title}</h3>
               <p className="mt-2 text-sm text-white/70">{v.body}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>

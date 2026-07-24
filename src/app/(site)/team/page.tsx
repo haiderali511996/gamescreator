@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import Avatar from "@/components/Avatar";
+import Reveal from "@/components/Reveal";
 import dbConnect from "@/lib/mongodb";
 import TeamMember, { ITeamMember } from "@/models/TeamMember";
 
@@ -27,8 +28,12 @@ export default async function TeamPage() {
           <p className="text-center text-white/60">Team roster coming soon.</p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {team.map((member) => (
-              <div key={member._id.toString()} className="gc-card flex flex-col items-center rounded-xl p-6 text-center">
+            {team.map((member, i) => (
+              <Reveal
+                key={member._id.toString()}
+                delay={(i % 6) * 0.06}
+                className="gc-card flex flex-col items-center rounded-xl p-6 text-center transition hover:-translate-y-1 hover:border-amber/40"
+              >
                 <Avatar name={member.name} />
                 <h3 className="gc-heading mt-4 text-lg font-bold text-white">{member.name}</h3>
                 <p className="text-sm font-medium text-amber">{member.role}</p>
@@ -52,7 +57,7 @@ export default async function TeamPage() {
                     )}
                   </div>
                 )}
-              </div>
+              </Reveal>
             ))}
           </div>
         )}

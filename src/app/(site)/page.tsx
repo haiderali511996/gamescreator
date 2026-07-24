@@ -1,6 +1,9 @@
 import Link from "next/link";
 import dbConnect from "@/lib/mongodb";
 import Game, { IGame } from "@/models/Game";
+import Hero from "@/components/Hero";
+import Reveal from "@/components/Reveal";
+import GameCardGrid from "@/components/GameCardGrid";
 
 export const dynamic = "force-dynamic";
 
@@ -54,49 +57,22 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="gc-scanline-bg relative overflow-hidden border-b border-white/10 px-4 py-24 lg:px-8">
-        <div className="mx-auto max-w-5xl text-center">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-amber">
-            Games Creator Studio
-          </p>
-          <h1 className="gc-heading gc-glow text-4xl font-bold leading-tight text-white sm:text-6xl">
-            We build worlds players don&apos;t want to leave.
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70">
-            Games Creator is an independent game development studio crafting original titles
-            and co-development partnerships across PC, console, and mobile.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/games"
-              className="rounded-md bg-amber px-6 py-3 text-sm font-bold text-black transition hover:bg-amber-light"
-            >
-              Explore Our Games
-            </Link>
-            <Link
-              href="/career"
-              className="rounded-md border border-white/20 px-6 py-3 text-sm font-bold text-white transition hover:border-amber hover:text-amber"
-            >
-              Join The Team
-            </Link>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       <section className="border-b border-white/10 bg-white/[0.02] px-4 py-12 lg:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 text-center sm:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label}>
+          {stats.map((s, i) => (
+            <Reveal key={s.label} delay={i * 0.08}>
               <p className="gc-heading text-3xl font-bold text-amber">{s.value}</p>
               <p className="mt-1 text-xs uppercase tracking-wider text-white/60">{s.label}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       <section className="px-4 py-20 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-10 flex items-end justify-between">
+          <Reveal className="mb-10 flex items-end justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-amber">
                 Featured Titles
@@ -106,34 +82,15 @@ export default async function HomePage() {
             <Link href="/games" className="text-sm font-medium text-amber hover:text-amber-light">
               View all games →
             </Link>
-          </div>
+          </Reveal>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {games.map((game) => (
-              <Link
-                key={game._id}
-                href={`/games/${game.slug}`}
-                className="gc-card group rounded-xl p-6 transition hover:border-amber/50"
-              >
-                <p className="mb-2 inline-block rounded-full bg-amber/10 px-3 py-1 text-xs font-semibold text-amber">
-                  {game.status}
-                </p>
-                <h3 className="gc-heading text-xl font-bold text-white group-hover:text-amber">
-                  {game.title}
-                </h3>
-                <p className="mt-2 line-clamp-3 text-sm text-white/60">{game.description}</p>
-                <p className="mt-4 text-xs uppercase tracking-wider text-white/40">
-                  {game.platform?.join(" · ")}
-                </p>
-              </Link>
-            ))}
-          </div>
+          <GameCardGrid games={games as unknown as { _id: string; slug: string; title: string; description: string; status: string; platform?: string[] }[]} />
         </div>
       </section>
 
       <section className="border-t border-white/10 bg-white/[0.02] px-4 py-20 lg:px-8">
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-2">
-          <div>
+          <Reveal>
             <p className="text-xs font-semibold uppercase tracking-wider text-amber">
               Who We Are
             </p>
@@ -146,12 +103,12 @@ export default async function HomePage() {
             </p>
             <Link
               href="/about"
-              className="mt-6 inline-block rounded-md border border-white/20 px-6 py-3 text-sm font-bold text-white hover:border-amber hover:text-amber"
+              className="mt-6 inline-block rounded-md border border-white/20 px-6 py-3 text-sm font-bold text-white transition hover:border-amber hover:text-amber"
             >
               More About Us
             </Link>
-          </div>
-          <div className="gc-card rounded-xl p-8">
+          </Reveal>
+          <Reveal delay={0.15} className="gc-card rounded-xl p-8">
             <h3 className="gc-heading text-lg font-bold text-amber">Got a game idea?</h3>
             <p className="mt-2 text-sm text-white/60">
               We partner with indie studios and publishers on co-development, porting, and
@@ -159,11 +116,11 @@ export default async function HomePage() {
             </p>
             <Link
               href="/submit-game"
-              className="mt-4 inline-block rounded-md bg-amber px-5 py-2.5 text-sm font-bold text-black hover:bg-amber-light"
+              className="mt-4 inline-block rounded-md bg-amber px-5 py-2.5 text-sm font-bold text-black transition hover:scale-105 hover:bg-amber-light"
             >
               Submit Your Game
             </Link>
-          </div>
+          </Reveal>
         </div>
       </section>
     </div>

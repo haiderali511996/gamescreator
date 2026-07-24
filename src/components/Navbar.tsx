@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Logo from "./Logo";
 
 const menuGroups = [
@@ -70,38 +71,46 @@ export default function Navbar() {
             <button className="text-sm font-medium text-white/80 transition hover:text-amber">
               More ▾
             </button>
-            {menuOpen && (
-              <div className="absolute left-1/2 top-full w-[640px] -translate-x-1/2 pt-4">
-                <div className="gc-card grid grid-cols-3 gap-6 rounded-xl p-6 shadow-2xl shadow-black/60">
-                  {menuGroups.map((group) => (
-                    <div key={group.heading}>
-                      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-amber">
-                        {group.heading}
-                      </p>
-                      <ul className="space-y-2">
-                        {group.links.map((l) => (
-                          <li key={l.href}>
-                            <Link
-                              href={l.href}
-                              className="text-sm text-white/80 transition hover:text-amber"
-                            >
-                              {l.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {menuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute left-1/2 top-full w-[640px] -translate-x-1/2 pt-4"
+                >
+                  <div className="gc-card grid grid-cols-3 gap-6 rounded-xl p-6 shadow-2xl shadow-black/60">
+                    {menuGroups.map((group) => (
+                      <div key={group.heading}>
+                        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-amber">
+                          {group.heading}
+                        </p>
+                        <ul className="space-y-2">
+                          {group.links.map((l) => (
+                            <li key={l.href}>
+                              <Link
+                                href={l.href}
+                                className="text-sm text-white/80 transition hover:text-amber"
+                              >
+                                {l.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
             href="/submit-game"
-            className="hidden rounded-md bg-amber px-4 py-2 text-sm font-bold text-black transition hover:bg-amber-light lg:inline-block"
+            className="hidden rounded-md bg-amber px-4 py-2 text-sm font-bold text-black transition hover:scale-105 hover:bg-amber-light lg:inline-block"
           >
             Submit Game
           </Link>

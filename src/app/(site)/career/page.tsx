@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
+import Reveal from "@/components/Reveal";
 import dbConnect from "@/lib/mongodb";
 import CareerPosting, { ICareerPosting } from "@/models/CareerPosting";
 
@@ -36,8 +37,8 @@ export default async function CareerPage() {
           </p>
         ) : (
           <div className="space-y-4">
-            {postings.map((job) => (
-              <div key={job._id.toString()} className="gc-card rounded-xl p-6">
+            {postings.map((job, i) => (
+              <Reveal key={job._id.toString()} delay={i * 0.06} className="gc-card rounded-xl p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="gc-heading text-lg font-bold text-white">{job.title}</h2>
                   <span className="rounded-full bg-amber/10 px-3 py-1 text-xs font-semibold text-amber">
@@ -63,7 +64,7 @@ export default async function CareerPage() {
                 >
                   Apply Now
                 </a>
-              </div>
+              </Reveal>
             ))}
           </div>
         )}

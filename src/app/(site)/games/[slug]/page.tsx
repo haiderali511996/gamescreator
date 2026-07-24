@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import dbConnect from "@/lib/mongodb";
 import Game, { IGame } from "@/models/Game";
+import GameCover from "@/components/GameCover";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,9 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
   if (!game) notFound();
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-16 lg:px-8">
+    <article>
+      <GameCover title={game.title} className="h-64 w-full sm:h-80" />
+      <div className="mx-auto max-w-4xl px-4 py-16 lg:px-8">
       <Link href="/games" className="text-sm text-amber hover:text-amber-light">
         ← Back to Games
       </Link>
@@ -63,6 +66,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
           )}
         </div>
       )}
+      </div>
     </article>
   );
 }
