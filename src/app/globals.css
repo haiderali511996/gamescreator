@@ -39,3 +39,12 @@ body {
   background-image: radial-gradient(circle at 20% 20%, rgba(245, 166, 35, 0.08), transparent 40%),
     radial-gradient(circle at 80% 0%, rgba(245, 166, 35, 0.06), transparent 45%);
 }
+
+@keyframes gc-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
