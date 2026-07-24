@@ -1,5 +1,6 @@
+import path from "path";
 import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
@@ -86,7 +87,19 @@ const BLOGS = [
 
 async function seed() {
   const uri = process.env.MONGODB_URI;
-  if (!uri) throw new Error("MONGODB_URI not set");
+  if (!uri) {
+    const envPath = path.resolve(process.cwd(), ".env.local");
+    const found = Object.keys(process.env).filter((k) =>
+      ["MONGODB_URI", "NEXTAUTH_SECRET", "NEXTAUTH_URL", "ADMIN_SEED_EMAIL", "ADMIN_SEED_PASSWORD"].includes(k)
+    );
+    throw new Error(
+      `MONGODB_URI not set.\nExpected to load it from: ${envPath}\n` +
+        `Env keys actually found from that set: ${found.length ? found.join(", ") : "(none)"}\n` +
+        `Check that .env.local exists at the repo root, contains a line like ` +
+        `"MONGODB_URI=mongodb+srv://..." with no surrounding quotes, and that no other ` +
+        `dotenv-loading tool (e.g. dotenvx) is overriding it with a different file.`
+    );
+  }
 
   await mongoose.connect(uri);
   console.log("Connected to MongoDB");
