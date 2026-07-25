@@ -5,6 +5,7 @@ import GameCover from "./GameCover";
 interface MarqueeGame {
   _id: string;
   title: string;
+  coverImage?: string;
 }
 
 const MIN_TILES_PER_ROW = 16;
@@ -38,7 +39,7 @@ function MarqueeRow({
             key={`${g._id}-${i}`}
             className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-lg shadow-black/40 sm:h-24 sm:w-24"
           >
-            <GameCover title={g.title} className="h-full w-full" />
+            <GameCover title={g.title} image={g.coverImage} className="h-full w-full" />
           </div>
         ))}
       </div>

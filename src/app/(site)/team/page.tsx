@@ -34,7 +34,7 @@ export default async function TeamPage() {
                 delay={(i % 6) * 0.06}
                 className="gc-card flex flex-col items-center rounded-xl p-6 text-center transition hover:-translate-y-1 hover:border-amber/40"
               >
-                <Avatar name={member.name} />
+                <Avatar name={member.name} photo={member.photo} />
                 <h3 className="gc-heading mt-4 text-lg font-bold text-white">{member.name}</h3>
                 <p className="text-sm font-medium text-amber">{member.role}</p>
                 <p className="mt-2 text-sm text-white/60">{member.bio}</p>

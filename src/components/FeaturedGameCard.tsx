@@ -11,6 +11,7 @@ interface FeaturedGame {
   status: string;
   platform?: string[];
   genre?: string[];
+  coverImage?: string;
   storeLinks?: { steam?: string; appStore?: string; playStore?: string };
 }
 
@@ -27,7 +28,11 @@ export default function FeaturedGameCard({ game, delay = 0 }: { game: FeaturedGa
       className="gc-card overflow-hidden rounded-2xl"
     >
       <Link href={`/games/${game.slug}`} className="group relative block aspect-[4/5] overflow-hidden">
-        <GameCover title={game.title} className="h-full w-full transition duration-500 group-hover:scale-105" />
+        <GameCover
+          title={game.title}
+          image={game.coverImage}
+          className="h-full w-full transition duration-500 group-hover:scale-105"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
         <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-amber backdrop-blur">
           {game.genre?.[0] ?? "Game"}

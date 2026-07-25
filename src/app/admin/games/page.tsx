@@ -12,7 +12,8 @@ export default function AdminGamesPage() {
         { name: "title", label: "Title", type: "text", required: true },
         { name: "slug", label: "Slug", type: "text", required: true },
         { name: "description", label: "Description", type: "textarea", required: true },
-        { name: "coverImage", label: "Cover Image URL", type: "text" },
+        { name: "coverImage", label: "Cover Image", type: "image" },
+        { name: "screenshots", label: "Screenshots / Gallery", type: "gallery" },
         { name: "platform", label: "Platforms (comma separated)", type: "tags" },
         { name: "genre", label: "Genres (comma separated)", type: "tags" },
         {

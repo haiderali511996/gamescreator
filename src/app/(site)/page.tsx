@@ -93,6 +93,7 @@ export default async function HomePage() {
               status: g.status,
               platform: g.platform,
               genre: g.genre,
+              coverImage: g.coverImage,
             }))}
           />
         </div>

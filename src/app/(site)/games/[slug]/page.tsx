@@ -28,7 +28,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
 
   return (
     <article>
-      <GameCover title={game.title} className="h-64 w-full sm:h-80" />
+      <GameCover title={game.title} image={game.coverImage} className="h-64 w-full sm:h-80" />
       <div className="mx-auto max-w-4xl px-4 py-16 lg:px-8">
       <Link href="/games" className="text-sm text-amber hover:text-amber-light">
         ← Back to Games
@@ -64,6 +64,23 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
               Play Store
             </a>
           )}
+        </div>
+      )}
+
+      {game.screenshots?.length > 0 && (
+        <div className="mt-12">
+          <h2 className="gc-heading text-lg font-bold text-white">Screenshots</h2>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {game.screenshots.map((src, i) => (
+              // eslint-disable-next-line @next/next/no-img-element -- may be an arbitrary external URL
+              <img
+                key={i}
+                src={src}
+                alt={`${game.title} screenshot ${i + 1}`}
+                className="aspect-video w-full rounded-lg border border-white/10 object-cover"
+              />
+            ))}
+          </div>
         </div>
       )}
       </div>

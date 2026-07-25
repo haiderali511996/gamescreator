@@ -1,5 +1,16 @@
-/** Initials-based placeholder avatar — no external image dependency. Editable via admin panel once real photos exist. */
-export default function Avatar({ name }: { name: string }) {
+/** Shows the uploaded team photo when set, otherwise an initials-based placeholder. */
+export default function Avatar({ name, photo }: { name: string; photo?: string }) {
+  if (photo) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- photo may be an arbitrary external URL
+      <img
+        src={photo}
+        alt={name}
+        className="h-20 w-20 rounded-full border-2 border-amber/40 object-cover"
+      />
+    );
+  }
+
   const initials = name
     .split(" ")
     .map((n) => n[0])

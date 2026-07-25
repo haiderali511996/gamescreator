@@ -1,7 +1,7 @@
 /**
- * Procedural poster-style cover art for games without real box art yet.
- * Deterministic per-title gradient + icon so each game reads as distinct.
- * Swap for a real <Image src={game.coverImage} /> once real art is uploaded.
+ * Cover art for a game. Renders the real uploaded coverImage when set;
+ * otherwise falls back to a deterministic procedural gradient + icon so
+ * each game still reads as visually distinct before real art exists.
  */
 const PALETTES = [
   ["#f5a623", "#7c2d12"],
@@ -18,7 +18,22 @@ function hashTitle(title: string) {
   return h;
 }
 
-export default function GameCover({ title, className = "" }: { title: string; className?: string }) {
+export default function GameCover({
+  title,
+  image,
+  className = "",
+}: {
+  title: string;
+  image?: string;
+  className?: string;
+}) {
+  if (image) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- image may be an arbitrary external URL
+      <img src={image} alt={title} className={`object-cover ${className}`} />
+    );
+  }
+
   const hash = hashTitle(title);
   const idx = hash % PALETTES.length;
   const [from, to] = PALETTES[idx];

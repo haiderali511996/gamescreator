@@ -30,7 +30,9 @@ export default async function GamesPage() {
 
       {games.length > 0 && (
         <div className="border-b border-white/10 py-8">
-          <GameMarquee games={games.map((g) => ({ _id: g._id.toString(), title: g.title }))} />
+          <GameMarquee
+            games={games.map((g) => ({ _id: g._id.toString(), title: g.title, coverImage: g.coverImage }))}
+          />
         </div>
       )}
 
@@ -53,6 +55,7 @@ export default async function GamesPage() {
                   status: g.status,
                   platform: g.platform,
                   genre: g.genre,
+                  coverImage: g.coverImage,
                   storeLinks: g.storeLinks,
                 }}
               />

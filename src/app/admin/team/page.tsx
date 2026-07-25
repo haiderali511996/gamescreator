@@ -12,7 +12,7 @@ export default function AdminTeamPage() {
         { name: "name", label: "Name", type: "text", required: true },
         { name: "role", label: "Role / Designation", type: "text", required: true },
         { name: "bio", label: "Bio", type: "textarea", required: true },
-        { name: "photo", label: "Photo URL", type: "text" },
+        { name: "photo", label: "Photo", type: "image" },
         { name: "order", label: "Display Order", type: "number" },
       ]}
     />

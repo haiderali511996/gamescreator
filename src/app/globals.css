@@ -40,6 +40,94 @@ body {
     radial-gradient(circle at 80% 0%, rgba(245, 166, 35, 0.06), transparent 45%);
 }
 
+/* Typography for admin-authored HTML blog content. */
+.gc-prose {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.75;
+}
+.gc-prose > * + * {
+  margin-top: 1.25em;
+}
+.gc-prose h1,
+.gc-prose h2,
+.gc-prose h3,
+.gc-prose h4 {
+  font-family: var(--font-heading), sans-serif;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 1.75em;
+}
+.gc-prose h1 {
+  font-size: 1.875rem;
+}
+.gc-prose h2 {
+  font-size: 1.5rem;
+}
+.gc-prose h3 {
+  font-size: 1.25rem;
+}
+.gc-prose p {
+  margin-top: 1.25em;
+}
+.gc-prose a {
+  color: var(--color-amber);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.gc-prose a:hover {
+  color: var(--color-amber-light);
+}
+.gc-prose strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+.gc-prose ul,
+.gc-prose ol {
+  padding-left: 1.5em;
+}
+.gc-prose ul {
+  list-style: disc;
+}
+.gc-prose ol {
+  list-style: decimal;
+}
+.gc-prose li + li {
+  margin-top: 0.5em;
+}
+.gc-prose blockquote {
+  border-left: 3px solid var(--color-amber);
+  padding-left: 1em;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+.gc-prose img {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  height: auto;
+}
+.gc-prose code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25em;
+  font-size: 0.9em;
+}
+.gc-prose pre {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1em;
+  overflow-x: auto;
+}
+.gc-prose pre code {
+  background: none;
+  padding: 0;
+}
+.gc-prose hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
 @keyframes gc-marquee {
   from {
     transform: translateX(0);

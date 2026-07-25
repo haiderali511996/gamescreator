@@ -12,6 +12,7 @@ interface GameCardData {
   status: string;
   platform?: string[];
   genre?: string[];
+  coverImage?: string;
 }
 
 const FAN_ANGLES = [-4, 2, -2, 4, -3, 3];
@@ -35,7 +36,7 @@ export default function GameCardGrid({ games }: { games: GameCardData[] }) {
               href={`/games/${game.slug}`}
               className="group relative block aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/40 transition group-hover:border-amber/60"
             >
-              <GameCover title={game.title} className="absolute inset-0 h-full w-full" />
+              <GameCover title={game.title} image={game.coverImage} className="absolute inset-0 h-full w-full" />
 
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 

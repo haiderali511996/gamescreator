@@ -80,7 +80,8 @@ const BLOGS = [
     title: "Behind the Scenes: Building Nova Drift Chronicles' Track System",
     slug: "behind-the-scenes-nova-drift-track-system",
     excerpt: "How we designed a procedural track system that keeps every race feeling handcrafted.",
-    content: "When we started prototyping Nova Drift Chronicles, we knew a static set of tracks wouldn't be enough...\n\nOur team built a modular track system combining hand-authored set pieces with procedural connectors, giving us dozens of unique race configurations without a matching explosion in art budget.",
+    content:
+      "<p>When we started prototyping Nova Drift Chronicles, we knew a static set of tracks wouldn't be enough...</p><p>Our team built a modular track system combining hand-authored set pieces with procedural connectors, giving us dozens of unique race configurations without a matching explosion in art budget.</p>",
     author: "Games Creator Team",
     tags: ["devlog", "nova-drift-chronicles"],
     published: true,

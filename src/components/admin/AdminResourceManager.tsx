@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 
-export type FieldType = "text" | "textarea" | "number" | "checkbox" | "tags" | "select" | "date";
+export type FieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "checkbox"
+  | "tags"
+  | "select"
+  | "date"
+  | "image"
+  | "gallery"
+  | "html";
 
 export interface FieldConfig {
   name: string;
@@ -21,6 +31,7 @@ function emptyFromFields(fields: FieldConfig[]): Item {
     if (f.type === "checkbox") obj[f.name] = false;
     else if (f.type === "tags") obj[f.name] = "";
     else if (f.type === "select") obj[f.name] = f.options?.[0] ?? "";
+    else if (f.type === "gallery") obj[f.name] = [];
     else obj[f.name] = "";
   }
   return obj;
@@ -41,6 +52,48 @@ export default function AdminResourceManager({
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Item | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  async function uploadOne(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Upload failed");
+    return data.url as string;
+  }
+
+  async function handleImageUpload(fieldName: string, file: File) {
+    setUploadingField(fieldName);
+    setUploadError(null);
+    try {
+      const url = await uploadOne(file);
+      setEditing((prev) => (prev ? { ...prev, [fieldName]: url } : prev));
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploadingField(null);
+    }
+  }
+
+  async function handleGalleryUpload(fieldName: string, files: FileList) {
+    setUploadingField(fieldName);
+    setUploadError(null);
+    try {
+      const urls: string[] = [];
+      for (const file of Array.from(files)) {
+        urls.push(await uploadOne(file));
+      }
+      setEditing((prev) =>
+        prev ? { ...prev, [fieldName]: [...(prev[fieldName] ?? []), ...urls] } : prev
+      );
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploadingField(null);
+    }
+  }
 
   async function load() {
     setLoading(true);
@@ -73,6 +126,9 @@ export default function AdminResourceManager({
     for (const f of fields) {
       if (f.type === "tags" && Array.isArray(item[f.name])) {
         formItem[f.name] = item[f.name].join(", ");
+      }
+      if (f.type === "gallery" && !Array.isArray(item[f.name])) {
+        formItem[f.name] = [];
       }
     }
     setEditing(formItem);
@@ -182,7 +238,7 @@ export default function AdminResourceManager({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
           <form
             onSubmit={handleSave}
-            className="gc-card max-h-[85vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl bg-black p-6"
+            className="max-h-[85vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl border border-amber/15 bg-neutral-950 p-6 shadow-2xl shadow-black/60"
           >
             <h2 className="gc-heading text-lg font-bold text-white">
               {editing._id ? "Edit" : "New"} {title.replace(/s$/, "")}
@@ -200,6 +256,48 @@ export default function AdminResourceManager({
                     value={editing[f.name] ?? ""}
                     onChange={(e) => setEditing({ ...editing, [f.name]: e.target.value })}
                   />
+                ) : f.type === "html" ? (
+                  <div className="space-y-2">
+                    <p className="text-xs text-white/40">
+                      Write HTML (headings, &lt;p&gt;, &lt;strong&gt;, &lt;img&gt;, etc.) — it renders as-is on the site.
+                    </p>
+                    <textarea
+                      required={f.required}
+                      rows={12}
+                      className={`${inputClass} font-mono text-xs`}
+                      value={editing[f.name] ?? ""}
+                      onChange={(e) => setEditing({ ...editing, [f.name]: e.target.value })}
+                    />
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 hover:border-amber hover:text-amber">
+                      {uploadingField === f.name ? "Uploading…" : "+ Insert Image"}
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          setUploadingField(f.name);
+                          setUploadError(null);
+                          try {
+                            const url = await uploadOne(file);
+                            setEditing((prev) =>
+                              prev
+                                ? { ...prev, [f.name]: `${prev[f.name] ?? ""}\n<img src="${url}" alt="" />\n` }
+                                : prev
+                            );
+                          } catch (err) {
+                            setUploadError(err instanceof Error ? err.message : "Upload failed");
+                          } finally {
+                            setUploadingField(null);
+                          }
+                        }}
+                      />
+                    </label>
+                    {uploadError && uploadingField === null && (
+                      <p className="text-xs text-red-400">{uploadError}</p>
+                    )}
+                  </div>
                 ) : f.type === "checkbox" ? (
                   <input
                     type="checkbox"
@@ -219,6 +317,88 @@ export default function AdminResourceManager({
                       </option>
                     ))}
                   </select>
+                ) : f.type === "image" ? (
+                  <div className="space-y-2">
+                    {editing[f.name] && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={editing[f.name]}
+                        alt=""
+                        className="h-32 w-32 rounded-lg border border-white/10 object-cover"
+                      />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                      className="w-full rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white file:mr-3 file:rounded file:border-0 file:bg-amber file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-black"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(f.name, file);
+                      }}
+                    />
+                    {uploadingField === f.name && (
+                      <p className="text-xs text-amber">Uploading…</p>
+                    )}
+                    {uploadError && uploadingField === null && (
+                      <p className="text-xs text-red-400">{uploadError}</p>
+                    )}
+                    <input
+                      type="text"
+                      placeholder="or paste an image URL"
+                      className={inputClass}
+                      value={editing[f.name] ?? ""}
+                      onChange={(e) => setEditing({ ...editing, [f.name]: e.target.value })}
+                    />
+                  </div>
+                ) : f.type === "gallery" ? (
+                  <div className="space-y-2">
+                    {Array.isArray(editing[f.name]) && editing[f.name].length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {editing[f.name].map((url: string, idx: number) => (
+                          <div key={`${url}-${idx}`} className="group relative">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={url}
+                              alt=""
+                              className="h-20 w-20 rounded-lg border border-white/10 object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setEditing((prev) =>
+                                  prev
+                                    ? { ...prev, [f.name]: prev[f.name].filter((_: string, i: number) => i !== idx) }
+                                    : prev
+                                )
+                              }
+                              className="absolute -right-1.5 -top-1.5 hidden h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white group-hover:flex"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 hover:border-amber hover:text-amber">
+                      {uploadingField === f.name ? "Uploading…" : "+ Add Images (unlimited)"}
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files.length > 0) {
+                            handleGalleryUpload(f.name, e.target.files);
+                          }
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                    {uploadingField === f.name && <p className="text-xs text-amber">Uploading…</p>}
+                    {uploadError && uploadingField === null && (
+                      <p className="text-xs text-red-400">{uploadError}</p>
+                    )}
+                  </div>
                 ) : (
                   <input
                     required={f.required}
