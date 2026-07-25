@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Plain CommonJS entry point for hosts (e.g. cPanel/Passenger) that
+    // require a custom server.js instead of `next start`.
+    "server.js",
   ]),
 ]);
 
