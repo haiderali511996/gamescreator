@@ -45,6 +45,8 @@ function SocialLinks({ member }: { member: ITeamMember }) {
 export default async function TeamPage() {
   const team = await getTeam();
   const founders = team.filter((m) => /founder/i.test(m.role)).slice(0, 2);
+  const founderIds = new Set(founders.map((m) => m._id.toString()));
+  const rest = team.filter((m) => !founderIds.has(m._id.toString()));
 
   return (
     <div>
@@ -72,29 +74,33 @@ export default async function TeamPage() {
                   ))}
                 </div>
 
-                <div className="my-14 flex items-center gap-4">
-                  <span className="h-px flex-1 bg-white/10" />
-                  <span className="gc-heading text-xs font-bold uppercase tracking-[0.3em] text-amber">Team</span>
-                  <span className="h-px flex-1 bg-white/10" />
-                </div>
+                {rest.length > 0 && (
+                  <div className="my-14 flex items-center gap-4">
+                    <span className="h-px flex-1 bg-white/10" />
+                    <span className="gc-heading text-xs font-bold uppercase tracking-[0.3em] text-amber">Team</span>
+                    <span className="h-px flex-1 bg-white/10" />
+                  </div>
+                )}
               </>
             )}
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {team.map((member, i) => (
-                <Reveal
-                  key={member._id.toString()}
-                  delay={(i % 6) * 0.06}
-                  className="gc-card flex flex-col items-center rounded-xl p-6 text-center transition hover:-translate-y-1 hover:border-amber/40"
-                >
-                  <Avatar name={member.name} photo={member.photo} />
-                  <h3 className="gc-heading mt-4 text-lg font-bold text-white">{member.name}</h3>
-                  <p className="text-sm font-medium text-amber">{member.role}</p>
-                  <p className="mt-2 text-sm text-white/60">{member.bio}</p>
-                  <SocialLinks member={member} />
-                </Reveal>
-              ))}
-            </div>
+            {rest.length > 0 && (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {rest.map((member, i) => (
+                  <Reveal
+                    key={member._id.toString()}
+                    delay={(i % 6) * 0.06}
+                    className="gc-card flex flex-col items-center rounded-xl p-6 text-center transition hover:-translate-y-1 hover:border-amber/40"
+                  >
+                    <Avatar name={member.name} photo={member.photo} />
+                    <h3 className="gc-heading mt-4 text-lg font-bold text-white">{member.name}</h3>
+                    <p className="text-sm font-medium text-amber">{member.role}</p>
+                    <p className="mt-2 text-sm text-white/60">{member.bio}</p>
+                    <SocialLinks member={member} />
+                  </Reveal>
+                ))}
+              </div>
+            )}
           </>
         )}
       </section>
