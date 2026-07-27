@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PLATFORM_OPTIONS } from "@/lib/platforms";
 
 export type FieldType =
   | "text"
@@ -12,7 +13,8 @@ export type FieldType =
   | "date"
   | "image"
   | "gallery"
-  | "html";
+  | "html"
+  | "platformLinks";
 
 export interface FieldConfig {
   name: string;
@@ -32,6 +34,7 @@ function emptyFromFields(fields: FieldConfig[]): Item {
     else if (f.type === "tags") obj[f.name] = "";
     else if (f.type === "select") obj[f.name] = f.options?.[0] ?? "";
     else if (f.type === "gallery") obj[f.name] = [];
+    else if (f.type === "platformLinks") obj[f.name] = [];
     else obj[f.name] = "";
   }
   return obj;
@@ -139,7 +142,7 @@ export default function AdminResourceManager({
       if (f.type === "tags" && Array.isArray(item[f.name])) {
         formItem[f.name] = item[f.name].join(", ");
       }
-      if (f.type === "gallery" && !Array.isArray(item[f.name])) {
+      if ((f.type === "gallery" || f.type === "platformLinks") && !Array.isArray(item[f.name])) {
         formItem[f.name] = [];
       }
     }
@@ -410,6 +413,48 @@ export default function AdminResourceManager({
                     {uploadError && uploadingField === null && (
                       <p className="text-xs text-red-400">{uploadError}</p>
                     )}
+                  </div>
+                ) : f.type === "platformLinks" ? (
+                  <div className="max-h-72 space-y-3 overflow-y-auto rounded-md border border-white/10 p-3">
+                    {PLATFORM_OPTIONS.map((platform) => {
+                      const list: { platform: string; url?: string }[] = Array.isArray(editing[f.name])
+                        ? editing[f.name]
+                        : [];
+                      const entry = list.find((p) => p.platform === platform);
+                      const checked = !!entry;
+                      return (
+                        <div key={platform}>
+                          <label className="flex items-center gap-2 text-sm text-white/80">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(e) => {
+                                const next = e.target.checked
+                                  ? [...list, { platform, url: "" }]
+                                  : list.filter((p) => p.platform !== platform);
+                                setEditing({ ...editing, [f.name]: next });
+                              }}
+                              className="h-4 w-4 accent-amber"
+                            />
+                            {platform}
+                          </label>
+                          {checked && (
+                            <input
+                              type="text"
+                              placeholder={`${platform} store/game URL (optional)`}
+                              className={`${inputClass} mt-1`}
+                              value={entry?.url ?? ""}
+                              onChange={(e) => {
+                                const next = list.map((p) =>
+                                  p.platform === platform ? { ...p, url: e.target.value } : p
+                                );
+                                setEditing({ ...editing, [f.name]: next });
+                              }}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <input

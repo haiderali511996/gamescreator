@@ -1,5 +1,10 @@
 import mongoose, { Schema, models, model } from "mongoose";
 
+export interface IPlatformLink {
+  platform: string;
+  url?: string;
+}
+
 export interface IGame {
   _id: string;
   title: string;
@@ -7,7 +12,7 @@ export interface IGame {
   description: string;
   coverImage?: string;
   screenshots: string[];
-  platform: string[];
+  platformLinks: IPlatformLink[];
   genre: string[];
   status: "In Development" | "Released" | "Coming Soon";
   releaseDate?: Date;
@@ -21,6 +26,14 @@ export interface IGame {
   updatedAt: Date;
 }
 
+const PlatformLinkSchema = new Schema<IPlatformLink>(
+  {
+    platform: { type: String, required: true },
+    url: { type: String },
+  },
+  { _id: false }
+);
+
 const GameSchema = new Schema<IGame>(
   {
     title: { type: String, required: true },
@@ -28,7 +41,7 @@ const GameSchema = new Schema<IGame>(
     description: { type: String, required: true },
     coverImage: { type: String },
     screenshots: { type: [String], default: [] },
-    platform: { type: [String], default: [] },
+    platformLinks: { type: [PlatformLinkSchema], default: [] },
     genre: { type: [String], default: [] },
     status: {
       type: String,

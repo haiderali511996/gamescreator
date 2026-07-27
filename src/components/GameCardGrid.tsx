@@ -9,8 +9,7 @@ interface GameCardData {
   slug: string;
   title: string;
   description: string;
-  status: string;
-  platform?: string[];
+  platformLinks?: { platform: string; url?: string }[];
   genre?: string[];
   coverImage?: string;
 }
@@ -40,16 +39,18 @@ export default function GameCardGrid({ games }: { games: GameCardData[] }) {
 
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-              <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-amber backdrop-blur">
-                {game.genre?.[0] ?? game.status}
-              </span>
+              {game.genre?.[0] && (
+                <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-amber backdrop-blur">
+                  {game.genre[0]}
+                </span>
+              )}
 
               <div className="absolute inset-x-0 bottom-0 p-4">
                 <h3 className="gc-heading text-lg font-bold leading-tight text-white drop-shadow-md">
                   {game.title}
                 </h3>
                 <p className="mt-1 text-xs uppercase tracking-wider text-white/60">
-                  {game.platform?.join(" · ")}
+                  {game.platformLinks?.map((p) => p.platform).join(" · ")}
                 </p>
                 <p className="mt-2 max-h-0 overflow-hidden text-xs text-white/70 opacity-0 transition-all duration-300 group-hover:max-h-16 group-hover:opacity-100">
                   {game.description}

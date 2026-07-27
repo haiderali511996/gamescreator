@@ -1,0 +1,20 @@
+/** Master list of gaming platforms/storefronts for the Games admin multi-select. */
+export const PLATFORM_OPTIONS = [
+  "PC (Windows)",
+  "macOS",
+  "Linux",
+  "Steam",
+  "Epic Games Store",
+  "GOG",
+  "itch.io",
+  "PlayStation 5",
+  "PlayStation 4",
+  "Xbox Series X|S",
+  "Xbox One",
+  "Nintendo Switch",
+  "Nintendo Switch 2",
+  "iOS",
+  "Android",
+  "Meta Quest",
+  "Web Browser",
+] as const;

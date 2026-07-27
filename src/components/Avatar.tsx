@@ -1,12 +1,21 @@
 /** Shows the uploaded team photo when set, otherwise an initials-based placeholder. */
-export default function Avatar({ name, photo }: { name: string; photo?: string }) {
+export default function Avatar({
+  name,
+  photo,
+  size = 80,
+}: {
+  name: string;
+  photo?: string;
+  size?: number;
+}) {
   if (photo) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- photo may be an arbitrary external URL
       <img
         src={photo}
         alt={name}
-        className="h-20 w-20 rounded-full border-2 border-amber/40 object-cover"
+        style={{ width: size, height: size }}
+        className="rounded-full border-2 border-amber/40 object-cover"
       />
     );
   }
@@ -19,7 +28,10 @@ export default function Avatar({ name, photo }: { name: string; photo?: string }
     .toUpperCase();
 
   return (
-    <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-amber/40 bg-gradient-to-br from-white/10 to-amber/10 text-xl font-bold text-amber">
+    <div
+      style={{ width: size, height: size, fontSize: size * 0.28 }}
+      className="flex items-center justify-center rounded-full border-2 border-amber/40 bg-gradient-to-br from-white/10 to-amber/10 font-bold text-amber"
+    >
       {initials}
     </div>
   );

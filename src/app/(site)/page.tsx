@@ -13,24 +13,21 @@ const fallbackGames = [
     title: "Nova Drift Chronicles",
     slug: "nova-drift-chronicles",
     description: "A fast-paced sci-fi racer set across shattered orbital cities.",
-    status: "In Development",
-    platform: ["PC", "Console"],
+    platformLinks: [{ platform: "PC (Windows)" }, { platform: "PlayStation 5" }],
   },
   {
     _id: "2",
     title: "Emberfall Tactics",
     slug: "emberfall-tactics",
     description: "A turn-based tactics RPG where every decision reshapes the battlefield.",
-    status: "Coming Soon",
-    platform: ["PC"],
+    platformLinks: [{ platform: "PC (Windows)" }],
   },
   {
     _id: "3",
     title: "Pocket Dungeon Crawl",
     slug: "pocket-dungeon-crawl",
     description: "A roguelite dungeon crawler built for quick mobile sessions.",
-    status: "Released",
-    platform: ["Mobile"],
+    platformLinks: [{ platform: "iOS" }, { platform: "Android" }],
   },
 ];
 
@@ -90,8 +87,7 @@ export default async function HomePage() {
               slug: g.slug,
               title: g.title,
               description: g.description,
-              status: g.status,
-              platform: g.platform,
+              platformLinks: g.platformLinks,
               genre: g.genre,
               coverImage: g.coverImage,
             }))}

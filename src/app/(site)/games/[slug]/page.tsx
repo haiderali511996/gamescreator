@@ -33,14 +33,36 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
       <Link href="/games" className="text-sm text-amber hover:text-amber-light">
         ← Back to Games
       </Link>
-      <p className="mt-6 inline-block rounded-full bg-amber/10 px-3 py-1 text-xs font-semibold text-amber">
-        {game.status}
-      </p>
-      <h1 className="gc-heading mt-3 text-3xl font-bold text-white sm:text-4xl">{game.title}</h1>
-      <p className="mt-2 text-sm uppercase tracking-wider text-white/40">
-        {game.platform?.join(" · ")} {game.genre?.length ? `— ${game.genre.join(", ")}` : ""}
-      </p>
+      <h1 className="gc-heading mt-6 text-3xl font-bold text-white sm:text-4xl">{game.title}</h1>
+      {game.genre?.length > 0 && (
+        <p className="mt-2 text-sm uppercase tracking-wider text-white/40">{game.genre.join(", ")}</p>
+      )}
       <p className="mt-8 text-white/75">{game.description}</p>
+
+      {game.platformLinks?.length > 0 && (
+        <div className="mt-6 flex flex-wrap gap-2">
+          {game.platformLinks.map((p) =>
+            p.url ? (
+              <a
+                key={p.platform}
+                href={p.url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/80 transition hover:border-amber hover:text-amber"
+              >
+                {p.platform}
+              </a>
+            ) : (
+              <span
+                key={p.platform}
+                className="rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/50"
+              >
+                {p.platform}
+              </span>
+            )
+          )}
+        </div>
+      )}
 
       {(game.storeLinks?.steam || game.storeLinks?.appStore || game.storeLinks?.playStore || game.trailerUrl) && (
         <div className="mt-8 flex flex-wrap gap-3">

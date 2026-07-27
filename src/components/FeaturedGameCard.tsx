@@ -4,12 +4,16 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import GameCover from "./GameCover";
 
+interface PlatformLink {
+  platform: string;
+  url?: string;
+}
+
 interface FeaturedGame {
   _id: string;
   slug: string;
   title: string;
-  status: string;
-  platform?: string[];
+  platformLinks?: PlatformLink[];
   genre?: string[];
   coverImage?: string;
   storeLinks?: { steam?: string; appStore?: string; playStore?: string };
@@ -37,9 +41,6 @@ export default function FeaturedGameCard({ game, delay = 0 }: { game: FeaturedGa
         <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-amber backdrop-blur">
           {game.genre?.[0] ?? "Game"}
         </span>
-        <span className="absolute right-3 top-3 rounded-full bg-amber px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-black">
-          {game.status}
-        </span>
       </Link>
 
       <div className="p-5">
@@ -47,9 +48,9 @@ export default function FeaturedGameCard({ game, delay = 0 }: { game: FeaturedGa
           <h3 className="gc-heading text-xl font-bold text-white hover:text-amber">{game.title}</h3>
         </Link>
 
-        {(game.genre?.length || game.platform?.length) && (
+        {(game.genre?.length || game.platformLinks?.length) && (
           <div className="mt-3 flex flex-wrap gap-2">
-            {[...(game.genre ?? []), ...(game.platform ?? [])].slice(0, 3).map((tag) => (
+            {game.genre?.map((tag) => (
               <span
                 key={tag}
                 className="rounded-full border border-amber/30 bg-amber/10 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-amber"
@@ -57,6 +58,27 @@ export default function FeaturedGameCard({ game, delay = 0 }: { game: FeaturedGa
                 {tag}
               </span>
             ))}
+            {game.platformLinks?.map((p) =>
+              p.url ? (
+                <a
+                  key={p.platform}
+                  href={p.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-white/70 transition hover:border-amber hover:text-amber"
+                >
+                  {p.platform}
+                </a>
+              ) : (
+                <span
+                  key={p.platform}
+                  className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-white/70"
+                >
+                  {p.platform}
+                </span>
+              )
+            )}
           </div>
         )}
 

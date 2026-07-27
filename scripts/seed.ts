@@ -45,25 +45,22 @@ const GAMES = [
     title: "Nova Drift Chronicles",
     slug: "nova-drift-chronicles",
     description: "A fast-paced sci-fi racer set across shattered orbital cities, blending arcade handling with deep vehicle customization.",
-    platform: ["PC", "Console"],
+    platformLinks: [{ platform: "PC (Windows)" }, { platform: "PlayStation 5" }, { platform: "Xbox Series X|S" }],
     genre: ["Racing", "Sci-Fi"],
-    status: "In Development",
   },
   {
     title: "Emberfall Tactics",
     slug: "emberfall-tactics",
     description: "A turn-based tactics RPG where every decision reshapes a war-torn kingdom and the loyalty of your squad.",
-    platform: ["PC"],
+    platformLinks: [{ platform: "PC (Windows)" }, { platform: "Steam" }],
     genre: ["Tactics", "RPG"],
-    status: "Coming Soon",
   },
   {
     title: "Pocket Dungeon Crawl",
     slug: "pocket-dungeon-crawl",
     description: "A roguelite dungeon crawler built for quick mobile sessions, with hundreds of item combinations to discover.",
-    platform: ["Mobile"],
+    platformLinks: [{ platform: "iOS" }, { platform: "Android" }],
     genre: ["Roguelite", "Dungeon Crawler"],
-    status: "Released",
   },
 ];
 
