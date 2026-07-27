@@ -16,29 +16,43 @@ const EXT_BY_TYPE: Record<string, string> = {
 };
 
 export async function POST(req: Request) {
-  const session = await requireAdminSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await requireAdminSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const formData = await req.formData();
-  const file = formData.get("file");
+    const formData = await req.formData();
+    const file = formData.get("file");
 
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    if (!(file instanceof File)) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+    if (!ALLOWED_TYPES.has(file.type)) {
+      return NextResponse.json(
+        { error: `Unsupported file type: ${file.type || "unknown"}` },
+        { status: 400 }
+      );
+    }
+    if (file.size > MAX_SIZE_BYTES) {
+      return NextResponse.json(
+        { error: `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB, max 5MB)` },
+        { status: 400 }
+      );
+    }
+
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    await mkdir(uploadsDir, { recursive: true });
+
+    const ext = EXT_BY_TYPE[file.type];
+    const filename = `${randomUUID()}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await writeFile(path.join(uploadsDir, filename), buffer);
+
+    return NextResponse.json({ url: `/uploads/${filename}` });
+  } catch (err) {
+    console.error("Upload failed:", err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Unexpected server error during upload" },
+      { status: 500 }
+    );
   }
-  if (!ALLOWED_TYPES.has(file.type)) {
-    return NextResponse.json({ error: "Unsupported file type" }, { status: 400 });
-  }
-  if (file.size > MAX_SIZE_BYTES) {
-    return NextResponse.json({ error: "File too large (max 5MB)" }, { status: 400 });
-  }
-
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadsDir, { recursive: true });
-
-  const ext = EXT_BY_TYPE[file.type];
-  const filename = `${randomUUID()}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(uploadsDir, filename), buffer);
-
-  return NextResponse.json({ url: `/uploads/${filename}` });
 }

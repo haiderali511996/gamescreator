@@ -59,8 +59,20 @@ export default function AdminResourceManager({
     const formData = new FormData();
     formData.append("file", file);
     const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) {
+      // Server/proxy rejected the request before it reached our route handler
+      // (e.g. a web-server upload size limit) — it returns an HTML error page,
+      // not JSON, so surface a useful message instead of a JSON parse crash.
+      throw new Error(
+        `Upload failed (HTTP ${res.status}). The file may be too large for the server, ` +
+          `or the upload was blocked before reaching the app.`
+      );
+    }
+
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Upload failed");
+    if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
     return data.url as string;
   }
 
